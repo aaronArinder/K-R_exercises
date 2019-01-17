@@ -10,7 +10,7 @@ void mygetline(char line[], int maxline);
 
 void main()
 {
-  int c, c_mem, i;
+  int c_mem, i;
   char line[MAXLINE];
 
   mygetline(line, MAXLINE);
@@ -22,7 +22,7 @@ void main()
     if (
       line[i] != '\n'                          // currently not a newline
       && (
-        (c_mem != ' ')                         // mem and current not ' '
+        (c_mem != ' ')                         // mem not ' '
         || (c_mem == ' ' && line[i] != ' ' )   // previously a space, but currently not
       )
       && (c_mem != '\t' && line[i] != '\t')    // mem and current not tab
@@ -37,7 +37,7 @@ void main()
 void mygetline(char s[], int lim)
 {
   int c, i;
-  for (i = 0; i < lim - 1 && (c=getchar()) != EOF; ++i) {
+  for (i = 0; i < lim - 1 && (c = getchar()) != EOF; ++i) {
     s[i] = c;
   }
   s[i] = '\0';
