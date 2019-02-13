@@ -6,7 +6,7 @@
 #define MAXLINE 1000 /*max input line size*/
 #define LOWERBOUND 80
 
-int mygetline(char line[], int maxline); /*already a getline on system; so, renamed*/
+int my_get_line(char line[], int maxline); /*already a getline on system; so, renamed*/
 void copy(char to[], char from[]);
 int get_length(char longest[]);
 void print_longest(char longest[]);
@@ -21,7 +21,7 @@ int main()
   int e;
 
   max = 0;
-  while ((len = mygetline(line, MAXLINE)) > 0)
+  while ((len = my_get_line(line, MAXLINE)) > 0)
     if (len > max) {
       max = len;
       copy(longest, line);
@@ -37,10 +37,10 @@ int main()
 }
 
 /*getline: read a line into s, return length*/
-int mygetline(char s[], int lim)
+int my_get_line(char s[], int lim)
 {
   int c, i;
-  for (i=0; i<lim-1 && (c=getchar()) != EOF && c!='\n'; ++i)
+  for (i = 0; i < lim-1 && (c = getchar()) != EOF && c != '\n'; ++i)
     s[i] = c;
   if (c == '\n') {
     s[i] = c;
@@ -50,7 +50,7 @@ int mygetline(char s[], int lim)
   return i;
 }
 
-int get_length(char longest[]) /*print length of longest line*/
+int get_length(char longest[]) /*get length of line*/
 {
   int l;
   for (l = 0; ; ++l) {
