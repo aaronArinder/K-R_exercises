@@ -31,7 +31,7 @@ void replace_tabs(char line[], char new_line[])
   int k = 0;
   int end = 0; /*this marks ending elm of new_line, which can be longer than line*/
 
-  while (line[i] != EOF) {
+  while (line[i] != '\0') {
     if (line[i] == '\t') {
       // add however many spaces make a tab
       while (k < TABLENGTH) {
@@ -76,6 +76,7 @@ void print_line(char line[]) /*print line*/
       stop = 1;
     }
   }
+  printf("\n\n");
   return;
 }
 
