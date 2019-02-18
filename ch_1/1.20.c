@@ -42,6 +42,7 @@ void replace_tabs(char line[], char new_line[])
       }
       // reset k count
       k = 0;
+      i++;
     } else {
       new_line[end] = line[i];
       i++;
@@ -51,6 +52,7 @@ void replace_tabs(char line[], char new_line[])
 
   return;
 }
+
 
 void my_get_line(char s[], int lim)
 {
