@@ -10,6 +10,7 @@
 
 void my_get_line(char line[], int maxline); /*already getline on system; renamed*/
 void print_line(char line[]); /*print char array*/
+void print_tabs_spaces_count(char line[]); /*prints count of tabs/spaces*/
 void replace_tabs(char line[], char new_line[]);
 
 int main()
@@ -64,7 +65,26 @@ void my_get_line(char s[], int lim)
   return;
 }
 
-void print_line(char line[]) /*print line*/
+void print_tabs_spaces_count(char line[])
+{
+  int index = 0, tabs = 0, spaces = 0;
+  //printf("index: %i, tabs: %i, spaces: %i\n\n", index, tabs, spaces);
+  while (line[index] != '\0') {
+    if (line[index] == '\t') {
+      tabs++;
+    } else if (line[index] == ' ') {
+      spaces++;
+    }
+    index++;
+  }
+
+  printf("\n  tabs: %i \n  spaces: %i", tabs, spaces);
+  printf("\n\n");
+  return;
+}
+
+
+void print_line(char line[])
 {
   int l;
   int stop = 0;
