@@ -20,8 +20,16 @@ int main()
   char new_line[MAXLINE]; /*line to be returned*/
 
   my_get_line(line, MAXLINE);
+
+  printf("\nTab length set at: %i", TABLENGTH);
   replace_tabs(line, new_line);
+  printf("\n\nnew line\n");
   print_line(new_line);
+
+  printf("old line");
+  print_tabs_spaces_count(line);
+  printf("new line");
+  print_tabs_spaces_count(new_line);
 
   return 0;
 }
