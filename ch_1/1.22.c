@@ -35,6 +35,7 @@ void my_get_line(char s[], int lim)
   s[i] = '\0';
   return;
 }
+
 int find_line_end(char line[])
 {
   int index = 0, stop = 0;
@@ -65,10 +66,8 @@ int find_next_blank_tab (char line[], int begin, int end)
 void add_new_lines(char line[], char new_line[])
 {
   int line_index = 0, new_line_index = 0;
-  int current_char = 0;
   int chunk = 0;
   int next_blank_tab_index;
-  int written = 0, writing = 1;
   int actual_line_length = find_line_end(line);
 
   while(line_index < actual_line_length) {
