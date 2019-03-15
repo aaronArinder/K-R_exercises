@@ -6,15 +6,23 @@
  * notes:
  *   - assuming that a C program would be read through something like my_get_line
  *   - this _is_ super hard in its full generality. I'm going to start with minimal syntax checking
- *     and add more support in the future, if I feel like coming back to this exercise.
+ *     and add more support in the future if I feel like coming back to this exercise.
  *   - currently supports checking for:
  *     - opening/closing (), [], {}
  *
+ *     - big idea for block matching: have two arrays, one that keeps a
+ *       running sum of openers/closers, where an opener increments the
+ *       sum and a closer decrements the sum. For (){}, the sum == 0. For
+ *       ({}, the sum is 1. If the array keeping track of the running sum
+ *       has a 0, we find the matching element in the array keeping track
+ *       of the symbol indices in the user-inputted line.
+ *
+ *
  *   - ideas of what to support next:
- *     - something between ()
+ *     - that there's something between ()
  *     - opening/closing of quotes, both single and double
  *       - no strings outside of quotes
- *     - syntax not ill-formed: e.g., () immediately followed by {}, not ()
+ *     - syntax not ill-formed: e.g., conditional () immediately followed by {}, not ()
  * */
 
 #include <stdio.h>
@@ -23,141 +31,83 @@
 
 void my_get_line(char line[], int maxline); /*already getline on system; renamed*/
 void print_line(char line[]); /*print char array*/
-int check_block_match (int line_index, char block_demarcator, char line[]);
-int check_quote_match (int line_index, char quote, char line[]);
-int verify_syntax (char line[]);
-int find_first_index_of_symbol (char symbol, char line[]);
-int find_last_index_of_symbol (char symbol, int target_symbol_count, char line[]);
+
+int get_symbol_count (char line[]);
+void set_symbol_and_match_count (int symbol_count, char line[], int count_list[], int symbol_indices[]);
+int find_problem_index (int symbol_count, int count_list[], int symbol_indices[]);
+
 char block_openers[SYMBOLS] = { '(', '[', '{' };
 char block_closers[SYMBOLS] = { ')', ']', '}' };
 
-void main()
+int main()
 {
-  int i = 0;
-  char line[MAXLINE], new_line[MAXLINE]; // input line
-  my_get_line(line, MAXLINE);
-  verify_syntax(line);
-  //print_line(new_line);
+  char line[MAXLINE]; // input line
+  my_get_line(line, MAXLINE); // get user-inputted line
+  int symbol_count = get_symbol_count(line); // total number of openers/closers
+  int count_list[symbol_count]; // keeps running total of opened/closed symbols
+  int symbol_indices[symbol_count]; // keeps track of each symbol's index
+
+  set_symbol_and_match_count(symbol_count, line, count_list, symbol_indices);
+
+  int problem_index = find_problem_index(symbol_count, count_list, symbol_indices);
+  if (problem_index) {
+    printf("Unmatched %c at index %i", line[problem_index], problem_index);
+    return 0;
+  } else {
+    return 1;
+  }
 }
 
-int verify_syntax (char line[]) {
-  int openers[SYMBOLS] = { 0,0,0 };
-  int closers[SYMBOLS] = { 0,0,0 };
-  //int paren_open = 0, brack_open = 0, brace_open = 0;
-  //int paren_close = 0, brack_close = 0, brace_close = 0;
-
-  int line_index = 0;
-  while (line[line_index] != '\0') {
-    char line_char = line[line_index];
-
-    for (int block_symbol_index = 0; block_symbol_index < SYMBOLS; block_symbol_index++) {
-      char block_open = block_openers[block_symbol_index];
-      char block_close = block_closers[block_symbol_index];
-
-      if (line_char == block_open) {
-        openers[block_symbol_index]++;
-      } else if (line_char == block_close) {
-        closers[block_symbol_index]++;
+int get_symbol_count (char line[]) {
+  int symbol_count = 0;
+  for (int line_index = 0; line[line_index] != '\0'; line_index++) {
+    for (int symbol_index = 0; symbol_index < SYMBOLS; symbol_index++) {
+      if (
+        block_openers[symbol_index] == line[line_index]
+        || block_closers[symbol_index] == line[line_index]
+      ) {
+        symbol_count++;
       }
 
     }
-    line_index++;
   }
+  return symbol_count;
+}
 
-  for (int iteration = 0; iteration < SYMBOLS; iteration++) {
+void set_symbol_and_match_count (int symbol_count, char line[], int count_list[], int symbol_indices[]) {
+  int match_count = 0;
+  int tracking_index = 0;
 
-    int symbol_open_count = openers[iteration];
-    int symbol_close_count = closers[iteration];
-    int problem_index;
-
-    // if symbol counts don't match
-    if (symbol_open_count != symbol_close_count) {
-      // and if open less than close, unmatched close symbol
-      if (symbol_open_count < symbol_close_count) {
-        // find outermost close symbol's index
-        problem_index = find_last_index_of_symbol(block_closers[iteration], symbol_close_count, line);
-        // report symbol and index
-        printf("Unmatched %c: index %i", block_closers[iteration], problem_index);
-      // otherwise, unmatched open symbol
-      } else if (symbol_close_count < symbol_open_count) {
-
-        /*
-         * TODO: this doesn't work for something like `if (1) {a}; if(2 {b}`, which prints
-         * `Unmatched (: index 3`
-         * */
-
-        // at the first index of that symbol's occurrence
-        problem_index = find_first_index_of_symbol(block_openers[iteration], line);
-        // report symbol and index
-        printf("Unmatched %c: index %i\n", block_openers[iteration], problem_index);
+  for (int line_index = 0; line[line_index] != '\0'; line_index++) {
+    for (int symbol_index = 0; symbol_index < SYMBOLS; symbol_index++) {
+      if (block_openers[symbol_index] == line[line_index]) {
+        match_count++;
+        count_list[tracking_index] = match_count;
+        symbol_indices[tracking_index] = line_index;
+        tracking_index++;
+      } else if (block_closers[symbol_index] == line[line_index]) {
+        match_count--;
+        count_list[tracking_index] = match_count;
+        symbol_indices[tracking_index] = line_index;
+        tracking_index++;
       }
     }
   }
+  count_list[tracking_index] = '\0';
+  symbol_indices[tracking_index] = '\0';
 }
 
-int find_first_index_of_symbol (char symbol, char line[]) {
-  int line_index = 0;
-  while (line[line_index] != '\0') {
-    if (line[line_index] == symbol) {
-      return line_index;
+int find_problem_index (int symbol_count, int count_list[], int symbol_indices[] ) {
+  int symbol_count_iterator = symbol_count - 1; // accounts for zero indexing
+
+  for (symbol_count_iterator; symbol_count_iterator > 0; symbol_count_iterator--) {
+    if (count_list[symbol_count_iterator] == 0 && count_list[symbol_count_iterator] != '\0') {
+      // we want the index right after the bad count
+      return symbol_indices[++symbol_count_iterator];
     }
-
-    line_index++;
-  }
-  return 0; // need better int returned; defaulting to 0 might be safe, though
-}
-
-int find_last_index_of_symbol (char symbol, int target_symbol_count, char line[]) {
-  int line_index = 0;
-  int iterating_symbol_count = 0;
-  while (line[line_index] != '\0') {
-    if (line[line_index] == symbol) {
-      iterating_symbol_count++;
-    }
-
-    if (iterating_symbol_count == target_symbol_count) {
-      return line_index;
-    }
-    line_index++;
-  }
-  return 0; // need better int returned; defaulting to 0 might be safe, though
-}
-
-
-
-int check_block_match (int line_index, char block_demarcator, char line[]) {
-  /*
-     for each elm of line
-     if elm == symbol's close
-       return 0
-     if no elm == symbol's close
-       return 1
-
-     probs: need to check not only that the symbol matches, but that it
-     matches appropriately: there can be no other of the same symbol
-     opening before a match is found. This is problematic for quotes,
-     whose open 'looks' the same as their close
-
-     what about <>, #, ++, --, etc?
-   */
-
-  char matching_demarcator;
-  // set symbol matches
-  if (block_demarcator == '(') {
-    matching_demarcator = ')';
-  } else if (block_demarcator == '[') {
-    matching_demarcator == ']';
-  } else if (block_demarcator == '{') {
-    matching_demarcator = '}';
-  } else if (block_demarcator == '\'') {
-    matching_demarcator = '\'';
-  } else if (block_demarcator == '"') {
-    matching_demarcator = '"';
   }
 
-  while (line[++line_index] != '\0') {
-
-  }
+  return 0; // not great; but, if someone's program is just ( then they've other problems
 }
 
 void my_get_line(char s[], int lim)
