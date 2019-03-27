@@ -22,6 +22,7 @@
 #include <ctype.h>
 #define MAXLINE 1000
 #define HEX_BASE 16
+#define ERR -1
 
 int htoi(char s[], int lim);
 void my_get_line(char s[], int lim);
@@ -34,8 +35,8 @@ void main () {
   int line_length = get_line_length(line);
   int result = htoi(line, line_length);
 
-  if (result) printf("\ninteger value: %i", result);
-  else printf("\nInvalid hexadecimal");
+  if (result != ERR) printf("\ninteger value: %i", result);
+  else printf("\nInvalid input: hexadecimal required");
   printf("\n");
 }
 
@@ -63,12 +64,12 @@ int htoi(char s[], int lim) {
   int sum = 0; // track sum
   signed int successful = 1; // default to success
 
-  while (successful != -1 && s[i] != '\0' && i >= 0) {
+  while (successful != ERR && s[i] != '\0' && i >= 0) {
     if (!isxdigit(s[i])) {
-      successful = -1; // let -1 represent err
+      successful = ERR;
     } else if (isxdigit(s[i])) {
       if (isupper(s[i])) {
-        sum = sum + (power(HEX_BASE, exponent) * (s[i] - 55));
+        sum = sum + (power(HEX_BASE, exponent) * (s[i] - 55)); // ascii charset subtraction
       } else if (islower(s[i])) {
         sum = sum + (power(HEX_BASE, exponent) * (s[i] - 87));
       } else {
@@ -80,8 +81,8 @@ int htoi(char s[], int lim) {
     exponent++;
   }
 
-  if (successful) return sum;
-  else return successful;
+  if (successful != ERR) return sum;
+  else return ERR;
 };
 
 int power(int base, int exponent) {
