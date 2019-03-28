@@ -50,8 +50,7 @@ int mygetline(char s[], int lim) { /*already getline on system*/
   return k;
 }
 
-void print_line(char line[])
-{
+void print_line(char line[]) {
   int stop = 0;
 
   printf("\n");
