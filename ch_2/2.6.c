@@ -1,6 +1,6 @@
 /*
- * Write a function setbits(x, p, n, y) that returns x with the n bits that begin at position p
- * inverted (i.e., 1 changed into 0 and vice versa), leaving the others unchanged.
+ * Write a function setbits(x,p,n,y) that returns x with the n bits that begin at position p set
+ * to the rightmost n bits of y, leaving the other bits unchanged.
  *
  * notes:
  *   - example, pg. 49: x = x & ~077
@@ -18,13 +18,36 @@
  * */
 
 #include <stdio.h>
+#include "dec_to_bin.c"
 
-void setbits(unsigned x, int p, int n, int y); // why unsigned?
+int setbits (unsigned x, int p, int n, int y); // why unsigned?
 
 void main () {
+  int argX = 4;
+  int argY = 2;
+  print_dec_to_bin(~2);
+  //setbits(argX, 3, 2, argY);
 }
 
-void setbits (unsigned x, int p, int n, int y) {
+// TODO: see note in dec_to_bin.c
 
+int setbits (unsigned x, int p, int n, int y) {
+  // get all 1s in y's positions
+  int mask = y | ~y;
+  // shift y to the left p bits
+  mask =  mask << p;
+  // now we have something like 1111 1111 1111 0000; so, let's XOR it with y to get only
+  // the bits from place p from y: something like 0000 0000 0000 1101
+  mask = mask ^ y;
+
+  // we're done masking; we've got all and only those bits from position p onward; so, let's
+  // mutate x
+
+  // 'bump' off p bits from the right; shifting back p to put 0 bits in those places
+  x = (x >> p) << p;
+  // inclusive OR to take any bits from x, which now has 0s in the rightmost p places so that
+  // any mask bits in those positions will be taken
+  x = mask | x;
+  return x;
 }
 
