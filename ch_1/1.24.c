@@ -39,8 +39,7 @@ int find_problem_index (int symbol_count, int count_list[], int symbol_indices[]
 char block_openers[SYMBOLS] = { '(', '[', '{' };
 char block_closers[SYMBOLS] = { ')', ']', '}' };
 
-int main()
-{
+int main() {
   char line[MAXLINE]; // input line
   my_get_line(line, MAXLINE); // get user-inputted line
   int symbol_count = get_symbol_count(line); // total number of openers/closers
