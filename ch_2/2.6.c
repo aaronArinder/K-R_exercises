@@ -29,8 +29,6 @@ void main () {
   //setbits(argX, 3, 2, argY);
 }
 
-// TODO: see note in dec_to_bin.c
-
 int setbits (unsigned x, int p, int n, int y) {
   // get all 1s in y's positions
   int mask = y | ~y;
