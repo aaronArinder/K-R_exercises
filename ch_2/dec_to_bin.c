@@ -11,7 +11,7 @@ void convert_binary_and_print (int decNum, int binaryNum[]);
 void print_dec_to_bin (int decNum) {
   // array to store binary number
   if (decNum >= 0) {
-    int binaryNum[BIN_SIZE] = {0};
+    int binaryNum[BIN_SIZE] = {0}; // don't need rest operator b/c it defaults to 0
     convert_binary_and_print(decNum, binaryNum);
   } else if (decNum < 0) {
     // apparently this is the OG of spread operators: GNU extension of c89 for gcc, grill
@@ -34,18 +34,21 @@ void convert_binary_and_print (int decNum, int binaryNum[]) {
   // counter for binary array
   int i = 0;
   while (decNum != 0) {
-    // storing remainder: this gives either 0, if num is divisible by 2, or 1, if it isn't, which
-    // is great because it gives us the binary representation of the number
-    int test;
+    int bin;
     if (decNum < 0) {
-      int a = ~(decNum + 1);
-      if ((decNum + 1) == 0) {
-        test = 0;
-      } else {
-        test = a % 2;
+      // if negative dec, add 1 to account for 2s complement representation (see above); take one's
+      // complement to remove sign
+      bin = ~(decNum + 1) % 2;
+      // if bin ending up being -1, it's because decNum was -1; adding 1 to -1 gives 0, and taking
+      // the one's complement of 0 gives -1; see the notes in ../udemy/bitwise_operators for a
+      // deeper explanation of why ~0 gives 1111
+      if (bin == -1) {
+        bin = 0;
       }
+    } else {
+      bin = decNum % 2;
     }
-    binaryNum[i] = test;
+    binaryNum[i] = bin;
     decNum = decNum / 2;
     i++;
   }
