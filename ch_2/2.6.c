@@ -30,9 +30,11 @@ void main () {
   //setbits(argX, 3, 2, argY);
 }
 
+// WIP'd version below
+// todo: figure out implementing n
 int setbits (unsigned x, int p, int n, int y) {
-  // get all 1s in y's positions
-  int mask = y | ~y;
+  // init mask with all 1s
+  int mask = ~0;
   // shift y to the left p bits
   mask =  mask << p;
   // now we have something like 1111 1111 1111 0000; so, let's XOR it with y to get only
