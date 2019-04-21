@@ -35,22 +35,27 @@ void convert_binary_and_print (int decNum, int binaryNum[]) {
   int i = 0;
   while (decNum != 0) {
     int bin;
+    // todo: comment this garbage
     if (decNum < 0) {
-      // if negative dec, add 1 to account for 2s complement representation (see above); take one's
-      // complement to remove sign
-      bin = ~(decNum + 1) % 2;
-      // if bin ending up being -1, it's because decNum was -1; adding 1 to -1 gives 0, and taking
-      // the one's complement of 0 gives -1; see the notes in ../udemy/bitwise_operators for a
-      // deeper explanation of why ~0 gives 1111
-      if (bin == -1) {
-        bin = 0;
+      bin = ((-1 * decNum) % 2);
+      binaryNum[i] = bin;
+      printf("decNum: %i\nbin: %i\n", decNum, bin);
+      decNum = (decNum / 2) + (decNum % 2);
+      if (decNum == -1) {
+        printf("inside if");
+        i++;
+        binaryNum[i] = 1;
+        decNum = 0;
       }
+      i++;
     } else {
+      printf("positive");
       bin = decNum % 2;
+      binaryNum[i] = bin;
+      printf("decNum: %i\nbin: %i\n", decNum, bin);
+      decNum = decNum / 2;
+      i++;
     }
-    binaryNum[i] = bin;
-    decNum = decNum / 2;
-    i++;
   }
 
   // print the binaryNum array in reverse order: the first 2 we divided by goes into the first

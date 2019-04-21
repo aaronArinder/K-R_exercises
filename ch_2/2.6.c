@@ -15,6 +15,7 @@
  *         1111 1111 1100 0000
  *       - this effectively 'masks off' the lowest 6 bits because they can only be 0 from &
  *       - so, xxxx xxxx xx00 0000 is the result (who knows what x is)
+ *   - going to use dec_to_bin, which returns the two's complement representation of the binary
  * */
 
 #include <stdio.h>
