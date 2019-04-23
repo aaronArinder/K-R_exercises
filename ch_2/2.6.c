@@ -20,35 +20,44 @@
 
 #include <stdio.h>
 #include "dec_to_bin.c"
+// BIN_SIZE available from dec_to_bin
 
-int setbits (unsigned x, int p, int n, int y); // why unsigned?
+void setbits (unsigned x, int p, int n, int y);
 
 void main () {
-  int argX = 4;
-  int argY = 2;
-  print_dec_to_bin(~2);
-  //setbits(argX, 3, 2, argY);
+  int argX = 10, p = 2, n = 1, argY = 1;
+  printf("\n");
+  printf("replacing %i bit(s) in the initial binary, beginning at position %i, from the second binary number.\n\n", n, p);
+  printf("initial binary: ");
+  print_dec_to_bin(argX);
+  printf("replacing binary: ");
+  print_dec_to_bin(argY);
+  printf("\n");
+  setbits(argX, p, n, argY);
 }
 
-// WIP'd version below
-// todo: figure out implementing n
-int setbits (unsigned x, int p, int n, int y) {
-  // init mask with all 1s
-  int mask = ~0;
-  // shift y to the left p bits
-  mask =  mask << p;
-  // now we have something like 1111 1111 1111 0000; so, let's XOR it with y to get only
-  // the bits from place p from y: something like 0000 0000 0000 1101
-  mask = mask ^ y;
-
-  // we're done masking; we've got all and only those bits from position p onward; so, let's
-  // mutate x
-
-  // 'bump' off p bits from the right; shifting back p to put 0 bits in those places
-  x = (x >> p) << p;
-  // inclusive OR to take any bits from x, which now has 0s in the rightmost p places so that
-  // any mask bits in those positions will be taken
-  x = mask | x;
-  return x;
+// right-shifting unsigned always fills with 0; right-shifting signed bits fills with sign-bits
+// (arithmetic shift) on some machines and -bits (logical shift) on others
+void setbits (unsigned x, int p, int n, int y) {
+  // clear right-side p bits
+  unsigned int right_shifted_x = (x >> p) << p;
+  //printf("right_shifted: ");
+  //print_dec_to_bin(right_shifted_x);
+  // clear left-side p + n bits
+  unsigned int left_shifted_x = (x <<  (BIN_SIZE - p + n)) >> (BIN_SIZE - p + n);
+  //printf("left_shifted: ");
+  //print_dec_to_bin(left_shifted_x);
+  unsigned int x_without_p = right_shifted_x | left_shifted_x;
+  //printf("x without n bits at p: ");
+  //print_dec_to_bin(x_without_p);
+  // clear right-side p bits
+  unsigned int right_shifted_y = (y >> p) << p;
+  // clear left-side p bits
+  unsigned int left_shifted_y = (right_shifted_y << (BIN_SIZE - p)) >> (BIN_SIZE - p);
+  //printf("left_shifted Y: ");
+  //print_dec_to_bin(left_shifted_y);
+  unsigned int combined_bits = x_without_p | left_shifted_y;
+  printf("combined bits: ");
+  print_dec_to_bin(combined_bits);
 }
 

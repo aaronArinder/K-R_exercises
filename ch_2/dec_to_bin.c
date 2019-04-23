@@ -1,5 +1,5 @@
 #include <stdio.h>
-#define BIN_SIZE 64 // size of binary array: 64 bits and 1 terminating character
+#define BIN_SIZE 32
 
 /*
  * based on udemy bitwise operators course; extended (dramatically) to support negative
@@ -39,20 +39,16 @@ void convert_binary_and_print (int decNum, int binaryNum[]) {
     if (decNum < 0) {
       bin = ((-1 * decNum) % 2);
       binaryNum[i] = bin;
-      printf("decNum: %i\nbin: %i\n", decNum, bin);
       decNum = (decNum / 2) + (decNum % 2);
       if (decNum == -1) {
-        printf("inside if");
         i++;
         binaryNum[i] = 1;
         decNum = 0;
       }
       i++;
     } else {
-      printf("positive");
       bin = decNum % 2;
       binaryNum[i] = bin;
-      printf("decNum: %i\nbin: %i\n", decNum, bin);
       decNum = decNum / 2;
       i++;
     }
