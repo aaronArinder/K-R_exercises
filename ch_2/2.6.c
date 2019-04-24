@@ -73,20 +73,22 @@ void setbits (unsigned x, int p, int n, unsigned y) {
   unsigned int right_shifted_x = (x >> p) << p;
 
   // clear left-side p + n bits
-  unsigned int left_shifted_x = (x <<  (BIN_SIZE - p + n)) >> (BIN_SIZE - p + n);
-  //printf("left_shifted: ");
-  //print_dec_to_bin(left_shifted_x);
+  unsigned int left_shifted_x;
+  if (BIN_SIZE - p + n >= BIN_SIZE) {
+    left_shifted_x = 0;
+  } else {
+    left_shifted_x = (x << (BIN_SIZE - p + n)) >> (BIN_SIZE - p + n);
+  }
   unsigned int x_without_p = right_shifted_x | left_shifted_x;
-  //printf("x without n bits at p: ");
-  //print_dec_to_bin(x_without_p);
-  // clear right-side p bits
-  unsigned int right_shifted_y = (y >> p) << p;
+
+  // clear right-side p bits: don't clear subset of replacer bits
+  unsigned int right_shifted_y = (y >> (p - n)) << (p - n);
+
   // clear left-side p bits
-  unsigned int left_shifted_y = (right_shifted_y << (BIN_SIZE - p)) >> (BIN_SIZE - p);
-  //printf("left_shifted Y: ");
-  //print_dec_to_bin(left_shifted_y);
-  unsigned int combined_bits = x_without_p | left_shifted_y;
-  printf("combined bits: ");
-  print_dec_to_bin(combined_bits);
+  unsigned int left_shifted_y = (right_shifted_y << (BIN_SIZE - p + n)) >> (BIN_SIZE - p + n);
+
+  unsigned int replaced_binary = x_without_p | left_shifted_y;
+  printf("replaced binary: ");
+  print_dec_to_bin(replaced_binary);
 }
 
