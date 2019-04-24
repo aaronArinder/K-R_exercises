@@ -25,12 +25,22 @@
 void setbits (unsigned x, int p, int n, int y);
 
 void main () {
-  int argX = 10, p = 2, n = 1, argY = 1;
+  int argX, p, n, argY;
+
+  printf("Input a number whose bits will be replaced\n");
+  scanf("%d", &argX);
+  printf("Input a number whose bits will be used for replacement in %i's bits\n", argX);
+  scanf("%d", &argY);
+  printf("Position to begin replacement\n");
+  scanf("%d", &p);
+  printf("How many bits to replace\n");
+  scanf("%d", &n);
+
   printf("\n");
-  printf("replacing %i bit(s) in the initial binary, beginning at position %i, from the second binary number.\n\n", n, p);
-  printf("initial binary: ");
+  printf("Replacing %i bit(s) in %i, beginning at position %i, from binary representation of %i.\n\n", n, argX, p, argY);
+  printf("%i's binary: ", argX);
   print_dec_to_bin(argX);
-  printf("replacing binary: ");
+  printf("%i's binary: ", argY);
   print_dec_to_bin(argY);
   printf("\n");
   setbits(argX, p, n, argY);
