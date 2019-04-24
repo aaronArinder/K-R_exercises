@@ -20,9 +20,10 @@
 
 #include <stdio.h>
 #include "dec_to_bin.c"
-// BIN_SIZE available from dec_to_bin
+// BIN_SIZE available from dec_to_bin: need tighter scope management; assumed C files were
+// scoped to the file like a node module
 
-void setbits (unsigned x, int p, int n, int y);
+void setbits (unsigned x, int p, int n, unsigned y);
 
 void main () {
   int argX, p, n, argY;
@@ -46,13 +47,31 @@ void main () {
   setbits(argX, p, n, argY);
 }
 
-// right-shifting unsigned always fills with 0; right-shifting signed bits fills with sign-bits
-// (arithmetic shift) on some machines and -bits (logical shift) on others
-void setbits (unsigned x, int p, int n, int y) {
+// right-shifting unsigned always fills with 0; so, use that. Right-shifting signed bits fills
+// with sign-bits (arithmetic shift) on some machines and -bits (logical shift) on others
+void setbits (unsigned x, int p, int n, unsigned y) {
+
+  /*
+   * First, find the subset of bits in x beginning at p, with n places, and then clear both sides
+   * of x's binary representation by shifting off both sides and using an inclusive OR to have all
+   * and only those bits from x not in the subset.
+   *
+   * Then do the inverse of that for y: shift off the right side of y, but don't shift off the
+   * subset of bits we want to use as replacements for x; shift off the bits left of the replacement
+   * subset.
+   *
+   * Finally, use an inclusive OR on both the handled x binary repsentation (it should now have a
+   * nicely-subset-sized hole) and the handled y binary representation (which should be an exact
+   * fit for that nicely-subset-sized hole in x).
+   *
+   * Hopefully.
+   *
+   * TODO: err handling for bad inputs, test negative numbers
+   * */
+
   // clear right-side p bits
   unsigned int right_shifted_x = (x >> p) << p;
-  //printf("right_shifted: ");
-  //print_dec_to_bin(right_shifted_x);
+
   // clear left-side p + n bits
   unsigned int left_shifted_x = (x <<  (BIN_SIZE - p + n)) >> (BIN_SIZE - p + n);
   //printf("left_shifted: ");
