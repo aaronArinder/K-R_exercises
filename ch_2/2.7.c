@@ -22,7 +22,7 @@ void main () {
   scanf("%d", &n);
 
   printf("\n");
-  printf("Replacing %i bit(s) in %i, beginning at position %i.\n\n", n, argX, p);
+  printf("Replacing %i bit(s) in the binary representation of %i, beginning at position %i.\n\n", n, argX, p);
   printf("%i's binary: ", argX);
   print_dec_to_bin(argX);
   printf("\n");
@@ -35,40 +35,34 @@ void invert (unsigned x, int p, int n) {
 
   /*
    * Big idea: shift off the bits on both sides of the bits we care about, invert with
-   * bitwise AND, and then inclusive OR the original bits and the inverted bits to get the final
-   * bits.
+   * bitwise AND, and then inclusive OR the original bits (minus the inverted mid-section)
+   * and the inverted bits to get the final bits.
    * */
 
   // invert before shifting
   unsigned int inverted_x = ~x;
   // rightside: keep p + n bits, including n (i.e., -1)
-  int right_shift_amount = p - n - 1;
+  int right_shift_amount = p - n;
   // leftside: keep p bits to the right
-  int left_shift_amount = BIN_SIZE - p - 1;
+  int left_shift_amount = BIN_SIZE - p;
 
   unsigned int shifted_inverted_x =
-    inverted_x
-      >> right_shift_amount
+    inverted_x >> right_shift_amount
       << right_shift_amount
       << left_shift_amount
       >> left_shift_amount;
 
-  unsigned int original_with_inverted_bits = x | shifted_inverted_x;
+  unsigned int shifted_inverted_x_mask =
+    ~0 >> right_shift_amount
+    << right_shift_amount
+    >> left_shift_amount
+    << left_shift_amount;
 
-  /*
-   * x == 100
-   * p == 5
-   * n == 2
-   *   seems to work
-   *
-   * x == 100
-   * p == 2
-   * n == 2
-   *   doesn't work
-   *   might be shifting off too much?
-   * */
+  unsigned int test = shifted_inverted_x_mask ^ x;
+  unsigned int original_with_inverted_bits = x ^ shifted_inverted_x;
 
-  printf("replaced binary: ");
+  printf("resulting binary: ");
   print_dec_to_bin(original_with_inverted_bits);
+  printf("resulting decimal: %i\n\n", original_with_inverted_bits);
 }
 
