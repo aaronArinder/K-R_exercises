@@ -32,6 +32,7 @@ int binsearch_new (int x, int v[], int n);
 void main ()
 {
   int num_to_find = 5;
+  // should obviously be bigger
   int arr_nums[10] = { 1,2,3,4,5,6,7,8,9,10 };
   int total_elms = 10;
   unsigned long int times_to_run = 100000000000000;
