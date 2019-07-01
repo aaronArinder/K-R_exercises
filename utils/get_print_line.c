@@ -1,7 +1,8 @@
 /*
- * K&R haven't covered this yet, but from a udemy course, I realized you can require in
- * other files with `#include "some_file.c"`, which is great, because I was tired of ferkin
- * copy/pasting the below.
+ * ex: #include "../utils/get_print_lin.c"
+ *
+ * my_get_line:
+ * print_line:
  * */
 
 #include <stdio.h>
