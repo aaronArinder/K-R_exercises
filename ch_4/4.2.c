@@ -89,6 +89,13 @@ double extended_atof (char s[])
   // skip over decimals because the return type, double, includes
   // the decimal
   if (s[i] == '.') i++;
+  // convert the chars after the '.' to float, tracking the number
+  // of places deep the chars ago (i.e., what negative power, if any,
+  // the final val will need to be raised to)
+  for (power = 1.0; isdigit(s[i]); i++) {
+    val = 10.0 * val + (s[i] - '0');
+    power *= 10.0;
+  }
 
   // test for scientific notation
   if (s[i] == 'e' || s[i] == 'E') {
@@ -98,11 +105,14 @@ double extended_atof (char s[])
     negative_power = (s[i] == '-') ? 1 : 0;
     if (s[i] == '+' || s[i] == '-') i++;
 
-    // convert and track decimal places via sci__power
-    for (scientific_power = 1.0; isdigit(s[i]); i++) {
-      val = 10 * val + (s[i] - '0');
-      scientific_power *= 10.0;
-      i++;
+    // convert and track decimal places via sci_power
+    double scientific_val;
+    for (scientific_val = 0.0; isdigit(s[i]); i++) {
+      scientific_val = 10 * scientific_val + (s[i] - '0');
+    }
+    int sci_iter;
+    for (sci_iter = 1, scientific_power = 1; sci_iter <= scientific_val; sci_iter++) {
+      scientific_power *= 10;
     }
 
     if (negative_power) {
@@ -111,13 +121,6 @@ double extended_atof (char s[])
       return (sign * val * scientific_power);
     }
   } else {
-    // convert the chars after the '.' to float, tracking the number
-    // of places deep the chars ago (i.e., what negative power, if any,
-    // the final val will need to be raised to)
-    for (power = 1.0; isdigit(s[i]); i++) {
-      val = 10.0 * val + (s[i] - '0');
-      power *= 10.0;
-    }
     return sign * val / power;
   }
 
