@@ -48,6 +48,13 @@ int main()
         else
           printf("error: zero divisor\n");
         break;
+      case '%':
+        op2 = pop();
+        if (op2 != 0.0) {
+          push((int) pop() % (int) op2);
+        } else
+          printf("error: zero divisor\n");
+        break;
       // need to figure out how to process input without \n
       case '\n':
         // used as a way to process input
