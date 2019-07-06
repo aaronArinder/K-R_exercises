@@ -1,4 +1,5 @@
-/* This is the starting code for 4.3-10, found in K&R pgs 76-9.
+/* Given the basic framework, it's straightforward to extend the calculator. Add the modulus (%)
+ * operator and provisions for negative numbers
  * */
 
 #include <stdio.h>
@@ -10,6 +11,11 @@
 int getop(char[]);
 void push(double);
 double pop(void);
+
+// hoisting these from pop/push
+#define MAXVAL 100 /* maximum depth of val stack */
+int sp = 0; /* next free stack position */
+double val[MAXVAL]; /* value stack */
 
 /* reverse Polish calculator */
 int main()
@@ -42,9 +48,18 @@ int main()
         else
           printf("error: zero divisor\n");
         break;
+      // need to figure out how to process input without \n
       case '\n':
-        printf("\t%.8g\n", pop());
+        // used as a way to process input
         break;
+      case '=':
+        if (sp != 1) {
+          printf("error: operands still available\n");
+          break;
+        } else {
+          printf("\t%.8g\n", pop());
+          break;
+        }
       default:
         printf("error: unknown command %s\n", s);
         break;
@@ -53,11 +68,8 @@ int main()
   return 0;
 }
 
-#define MAXVAL 100 /* maximum depth of val stack */
 
-int sp = 0; /* next free stack position */
-double val[MAXVAL]; /* value stack */
-
+// see hoisted defs above
 /* push: push f onto value stack */
 void push(double f)
 {
@@ -95,7 +107,7 @@ int getop(char s[])
     return c; // not a number
   i = 0;
   if (isdigit(c)) // collect integer part
-    while (isdigit(s[++i] = c =getch()))
+    while (isdigit(s[++i] = c = getch()))
       ;
   if (c == '.') // collect fraction part
     while (isdigit(s[++i] = c = getch()))
