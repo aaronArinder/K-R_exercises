@@ -107,21 +107,33 @@ int getop(char s[])
 {
   int i, c;
 
+  // strip whitespace, but last iter will have a
+  // operand, operator, or non-whitespace char
   while ((s[0] = c = getch()) == ' ' || c == '\t')
     ;
+  // end array
   s[1] = '\0';
+  // if not a digit or decimal
   if (!isdigit(c) && c != '.')
-    return c; // not a number
+    // not a number, and will be thrown to switch default
+    return c;
+
   i = 0;
-  if (isdigit(c)) // collect integer part
+  // collect integer part
+  if (isdigit(c))
     while (isdigit(s[++i] = c = getch()))
       ;
-  if (c == '.') // collect fraction part
+  // collect fraction part
+  if (c == '.')
     while (isdigit(s[++i] = c = getch()))
       ;
+  // end array
   s[i] ='\0';
+  // if not EOF
   if (c != EOF)
+    // then put the last read character into 'input' buffer
     ungetch(c);
+  // return signal that we've a number
   return NUMBER;
 }
 
