@@ -1,5 +1,30 @@
 /* Given the basic framework, it's straightforward to extend the calculator. Add the modulus (%)
  * operator and provisions for negative numbers
+ *
+ * Based on the following link, I'm going to represent the negative sign with `n`, rather than
+ * have it be part of a number (e.g.: 1, n, 1, - instead of -1, 1, -)
+ * https://www.scss.tcd.ie/John.Waldron/3d1/rpn.pdf
+ *
+ *
+ * EXAMPLES:
+ *   100
+ *   n
+ *   10
+ *   +
+ *   =
+ *          -90
+ *
+ *   10
+ *   10
+ *   %
+ *   =
+ *          0
+ *
+ *   0
+ *   0
+ *  \/ (esc. for comment)
+ *   =
+ *          error: zero divisor
  * */
 
 #include <stdio.h>
