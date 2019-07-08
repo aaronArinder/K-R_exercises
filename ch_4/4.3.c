@@ -65,6 +65,9 @@ int main()
         op2 = pop();
         push(pop() - op2);
         break;
+      case 'n':
+        push(pop() * -1 );
+        break;
       // must guarantee order
       case '/':
         op2 = pop();
@@ -85,8 +88,9 @@ int main()
         // used as a way to process input
         break;
       case '=':
+        // if the next available position isn't 1, input went afoul
         if (sp != 1) {
-          printf("error: operands still available\n");
+          printf("error: operands or operators still available\n");
           break;
         } else {
           printf("\t%.8g\n", pop());
@@ -140,20 +144,24 @@ int getop(char s[])
   s[1] = '\0';
   // if not a digit or decimal
   if (!isdigit(c) && c != '.')
-    // not a number, and will be thrown to switch default
+    // not a number, handle with switch
     return c;
 
   i = 0;
+
   // collect integer part
   if (isdigit(c))
     while (isdigit(s[++i] = c = getch()))
       ;
+
   // collect fraction part
   if (c == '.')
     while (isdigit(s[++i] = c = getch()))
       ;
+
   // end array
   s[i] ='\0';
+
   // if not EOF
   if (c != EOF)
     // then put the last read character into 'input' buffer
